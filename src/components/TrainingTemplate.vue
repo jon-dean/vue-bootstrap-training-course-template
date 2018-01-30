@@ -12,7 +12,6 @@
             <b-progress :value="percentageCompleted" :max="100" class="mb-3" variant="success"></b-progress>
             <p class="text-center"><strong>{{ percentageCompleted }}% Completed</strong></p>
           </div>
-
           <div id="smallScreenLessonList" v-for="item in courseContentList" v-bind:key="item.moduleTitle">
             <b-dropdown-item class="moduleTitle" disabled>{{ item.moduleTitle }}</b-dropdown-item>
             <div v-for="subItem in item.lessons" v-bind:key="subItem.lessonTitle">
@@ -43,7 +42,6 @@
             <b-progress :value="percentageCompleted" :max="100" class="mb-3" variant="success"></b-progress>
             <p class="text-center"><strong>{{ percentageCompleted }}% Completed</strong></p>
           </div>
-
           <b-list-group class="list-group-flush" v-for="item in courseContentList" v-bind:key="item.moduleTitle">
             <b-list-group-item button class="moduleTitle">{{ item.moduleTitle }}</b-list-group-item>
             <b-list-group :id="item.moduleID" class="list-group-flush" v-for="subItem in item.lessons" v-bind:key="subItem.lessonTitle">
@@ -79,7 +77,7 @@
           <!-- Only Show If Lesson Is An Audio File -->
           <div v-if="activeLesson.lessonType=='audio'">
             <div class="cardMediaFormatting theme--dark indigo">
-              <div class="audioFormatting p-5 text-center">
+              <div class="indigoBackground p-5 text-center">
                 <audio id="audioPlayer" :oncanplay="audioLoaded()" ref="audioPlayer" @timeupdate="onAudioTimeUpdate" @ended="resetAudioPlayer">
                   <source :src="activeLesson.contentURL" type="audio/mpeg">
                 </audio>
@@ -106,9 +104,42 @@
           <!-- Only Show If Lesson Is A PDF -->
           <div v-if="activeLesson.lessonType=='pdf'">
             <div class="cardMediaFormatting">
-              <div class="scrollOnMobile">
-                <iframe :src="activeLesson.contentURL" width="100%" style="min-height:625px;" frameborder="0"></iframe>
-              </div>
+
+              <!-- Small screen PDF page controls -->
+              <b-row class="d-block d-lg-none mb-4">
+                <b-input-group size="sm" class="centerContent">
+                  <b-input-group-prepend>
+                    <b-btn variant="outline-secondary" @click="goToFirstPage()">Start</b-btn>
+                    <b-btn variant="outline-secondary" @click="goToPreviousPage()">Previous</b-btn>
+                  </b-input-group-prepend>
+                  <b-form-input class="pageNumber border border-secondary border-right-0 text-center" type="number" v-model.number="currentPage" :max="pageCount"></b-form-input>
+                  <b-form-input class="pageNumberSpacer border border-secondary border-left-0 border-right-0" type="text" value="of" readonly></b-form-input>
+                  <b-form-input class="pageNumber border border-secondary border-left-0" type="text" :value="pageCount" readonly></b-form-input>
+                  <b-input-group-append>
+                    <b-btn variant="outline-secondary" @click="goToNextPage()">Next</b-btn>
+                    <b-btn variant="outline-secondary" @click="goToLastPage(pageCount)">End</b-btn>
+                  </b-input-group-append>
+                </b-input-group>
+              </b-row>
+
+              <!-- Tablet / desktop screen PDF page controls -->
+              <b-row class="d-none d-lg-block mb-4">
+                <b-input-group size="md" class="centerContent">
+                  <b-input-group-prepend>
+                    <b-btn variant="outline-secondary" @click="goToFirstPage()">Go To Start</b-btn>
+                    <b-btn variant="outline-secondary" @click="goToPreviousPage()">Previous Page</b-btn>
+                  </b-input-group-prepend>
+                  <b-form-input class="pageNumber border border-secondary border-right-0 text-center" type="number" v-model.number="currentPage" :max="pageCount"></b-form-input>
+                  <b-form-input class="pageNumberSpacer border border-secondary border-left-0 border-right-0" type="text" value="of" readonly></b-form-input>
+                  <b-form-input class="pageNumber border border-secondary border-left-0" type="text" :value="pageCount" readonly></b-form-input>
+                  <b-input-group-append>
+                    <b-btn variant="outline-secondary" @click="goToNextPage()">Next Page</b-btn>
+                    <b-btn variant="outline-secondary" @click="goToLastPage(pageCount)">Go To End</b-btn>
+                  </b-input-group-append>
+                </b-input-group>
+              </b-row>
+
+              <pdf id="pdfViewer" :src="activeLesson.contentURL" :page="currentPage" @num-pages="pageCount = $event" @page-loaded="currentPage = $event"></pdf>
             </div>
           </div>
         </b-card>
@@ -142,6 +173,9 @@ export default {
       percentageCompleted: 0,
 
       currentLesson: 'lesson-1',
+
+      currentPage: 1,
+      pageCount: 0,
 
       courseContentList: [
         {
@@ -333,6 +367,10 @@ export default {
     },
 
     loadContent: function (lessonID) {
+      // Let's reset the pdf page props
+      this.currentPage = 1
+      this.pageCount = 0
+
       // Let's set the currentLesson to load the right content
       this.currentLesson = lessonID
 
@@ -453,7 +491,28 @@ export default {
       let seconds = Math.floor(timeToFormat % 60)
       seconds = (seconds >= 10) ? seconds : '0' + seconds
       return minutes + ':' + seconds
+    },
+
+    goToPreviousPage: function () {
+      if (this.currentPage > 1) {
+        this.currentPage = this.currentPage - 1
+      }
+    },
+
+    goToNextPage: function () {
+      if (this.currentPage < this.pageCount) {
+        this.currentPage = this.currentPage + 1
+      }
+    },
+
+    goToFirstPage: function () {
+      this.currentPage = 1
+    },
+
+    goToLastPage: function (lastPage) {
+      this.currentPage = lastPage
     }
+
   }
 }
 </script>
@@ -535,12 +594,33 @@ export default {
     margin-top: 15px;
   }
 
-  .scrollOnMobile {
-    overflow:auto;
-    -webkit-overflow-scrolling:touch;
+  #pdfViewer {
+    overflow: hidden;
+    max-width: 100%;
+    height: 100%;
   }
 
-  .audioFormatting {
+  .centerContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  input.pageNumber.form-control {
+    max-width: 75px !important;
+    background-color: transparent;
+  }
+
+  input.pageNumberSpacer {
+    max-width: 40px;
+    background-color: transparent;
+  }
+
+  input#pageCounter {
+    width: 75px;
+  }
+
+  .indigoBackground {
     background-color: var(--indigo);
   }
 
