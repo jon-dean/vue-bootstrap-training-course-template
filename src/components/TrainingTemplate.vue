@@ -106,7 +106,9 @@
           <!-- Only Show If Lesson Is A PDF -->
           <div v-if="activeLesson.lessonType=='pdf'">
             <div class="cardMediaFormatting">
-              <object :data="activeLesson.contentURL" type="application/pdf" width="100%" height="1200"></object>
+              <div style="overflow:auto;-webkit-overflow-scrolling:touch">
+                <iframe :src="activeLesson.contentURL" style="width:100%;height:1200px"></iframe>
+              </div>
             </div>
           </div>
         </b-card>
