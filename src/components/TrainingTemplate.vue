@@ -106,8 +106,8 @@
           <!-- Only Show If Lesson Is A PDF -->
           <div v-if="activeLesson.lessonType=='pdf'">
             <div class="cardMediaFormatting">
-              <div style="overflow:auto;-webkit-overflow-scrolling:touch">
-                <iframe :src="activeLesson.contentURL" style="width:100%;height:1200px"></iframe>
+              <div class="scrollOnMobile">
+                <iframe :src="activeLesson.contentURL" width="100%" style="min-height:625px;" frameborder="0"></iframe>
               </div>
             </div>
           </div>
@@ -533,6 +533,11 @@ export default {
 
   .cardMediaFormatting {
     margin-top: 15px;
+  }
+
+  .scrollOnMobile {
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
   }
 
   .audioFormatting {
