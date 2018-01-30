@@ -79,7 +79,7 @@
           <!-- Only Show If Lesson Is An Audio File -->
           <div v-if="activeLesson.lessonType=='audio'">
             <div class="cardMediaFormatting theme--dark indigo">
-              <div class="audioFormatting">
+              <div class="audioFormatting p-5 text-center">
                 <audio id="audioPlayer" :oncanplay="audioLoaded()" ref="audioPlayer" @timeupdate="onAudioTimeUpdate" @ended="resetAudioPlayer">
                   <source :src="activeLesson.contentURL" type="audio/mpeg">
                 </audio>
@@ -89,13 +89,15 @@
                     <icon v-else name="play" scale="3" class="playIconPosition"></icon>
                   </b-btn>
                 </div>
-                <div id="leftSideTime" class="text-white">{{ elapsedTime }}</div>
-                <div id="scrubBar">
-                  <input type="range" v-model="scrubBar" :max="scrubBarMax" step="0.1" @input="changeCurrentTrackTime()" />
-                </div>
-                <div id="rightSideTime" class="text-white">
-                  <div v-if="startedAudioPlayback">-{{ remainingTime }}</div>
-                  <div v-else>-{{ trackLength }}</div>
+                <div class="d-flex flex-row justify-content-between mt-4">
+                  <div class="text-white">{{ elapsedTime }}</div>
+                  <div class="w-100 pt-1 pl-4 pr-4">
+                    <input type="range" v-model="scrubBar" :max="scrubBarMax" step="0.1" @input="changeCurrentTrackTime()" />
+                  </div>
+                  <div class="text-white">
+                    <div v-if="startedAudioPlayback">-{{ remainingTime }}</div>
+                    <div v-else>-{{ trackLength }}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -532,10 +534,6 @@ export default {
   }
 
   .audioFormatting {
-    width: 100%;
-    height: 285px;
-    padding: 75px;
-    text-align: center;
     background-color: var(--indigo);
   }
 
@@ -555,47 +553,7 @@ export default {
     margin: 9px 0 0 1px;
   }
 
-  #leftSideTime, #scrubBar {
-    float: left;
-  }
-
-  #leftSideTime, #rightSideTime {
-    min-width: 5%;
-    padding-top: 22px;
-  }
-
-  #leftSideTime {
-    text-align: right;
-  }
-
-  #rightSideTime {
-    float: right;
-    text-align: left;
-  }
-
-  #scrubBar {
-    max-width: 88%;
-    width: 88%;
-    padding: 25px 0 0 15px;
-  }
-
   input[type="range"] {
-    min-width: 100%;
+    width: 100%;
   }
-
-@media (min-width : 768px) and (max-width: 1024px) {
-  /* Tablets in Portrait Orientation */
-  #scrubBar {
-    max-width: 82%;
-    width: 82%;
-  }
-}
-
-@media (max-width : 768px) {
-  /* Phones in Portrait Orientation */
-  #scrubBar {
-    max-width: 70%;
-    width: 70%;
-  }
-}
 </style>
