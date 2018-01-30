@@ -26,6 +26,7 @@
               </b-dropdown-item-button>
             </div>
           </div>
+          <div class="mb-5"></div>
         </b-dropdown>
       </div>
 
