@@ -107,39 +107,14 @@
 
               <!-- Small screen PDF page controls -->
               <b-row class="d-block d-lg-none mb-4">
-                <b-input-group size="sm" class="centerContent">
-                  <b-input-group-prepend>
-                    <b-btn variant="outline-secondary" @click="goToFirstPage()">Start</b-btn>
-                    <b-btn variant="outline-secondary" @click="goToPreviousPage()">Previous</b-btn>
-                  </b-input-group-prepend>
-                  <b-form-input class="pageNumber border border-secondary border-right-0 text-center" type="number" v-model.number="currentPage" :max="pageCount"></b-form-input>
-                  <b-form-input class="pageNumberSpacer border border-secondary border-left-0 border-right-0" type="text" value="of" readonly></b-form-input>
-                  <b-form-input class="pageNumber border border-secondary border-left-0" type="text" :value="pageCount" readonly></b-form-input>
-                  <b-input-group-append>
-                    <b-btn variant="outline-secondary" @click="goToNextPage()">Next</b-btn>
-                    <b-btn variant="outline-secondary" @click="goToLastPage(pageCount)">End</b-btn>
-                  </b-input-group-append>
-                </b-input-group>
+                <vue-pdf-viewer height="500px" :url="activeLesson.contentURL"></vue-pdf-viewer>
               </b-row>
 
               <!-- Tablet / desktop screen PDF page controls -->
               <b-row class="d-none d-lg-block mb-4">
-                <b-input-group size="md" class="centerContent">
-                  <b-input-group-prepend>
-                    <b-btn variant="outline-secondary" @click="goToFirstPage()">Go To Start</b-btn>
-                    <b-btn variant="outline-secondary" @click="goToPreviousPage()">Previous Page</b-btn>
-                  </b-input-group-prepend>
-                  <b-form-input class="pageNumber border border-secondary border-right-0 text-center" type="number" v-model.number="currentPage" :max="pageCount"></b-form-input>
-                  <b-form-input class="pageNumberSpacer border border-secondary border-left-0 border-right-0" type="text" value="of" readonly></b-form-input>
-                  <b-form-input class="pageNumber border border-secondary border-left-0" type="text" :value="pageCount" readonly></b-form-input>
-                  <b-input-group-append>
-                    <b-btn variant="outline-secondary" @click="goToNextPage()">Next Page</b-btn>
-                    <b-btn variant="outline-secondary" @click="goToLastPage(pageCount)">Go To End</b-btn>
-                  </b-input-group-append>
-                </b-input-group>
+                <vue-pdf-viewer height="950px" :url="activeLesson.contentURL"></vue-pdf-viewer>
               </b-row>
 
-              <pdf id="pdfViewer" :src="activeLesson.contentURL" :page="currentPage" @num-pages="pageCount = $event" @page-loaded="currentPage = $event"></pdf>
             </div>
           </div>
         </b-card>
@@ -173,9 +148,6 @@ export default {
       percentageCompleted: 0,
 
       currentLesson: 'lesson-1',
-
-      currentPage: 1,
-      pageCount: 0,
 
       courseContentList: [
         {
@@ -304,7 +276,7 @@ export default {
           lessonType: 'pdf',
           lessonTitle: 'Lesson #5 Title',
           lessonDescription: 'A short paragraph on what the person is going to learn in this lesson.',
-          contentURL: './static/demo.pdf',
+          contentURL: './static/demo3.pdf',
           posterImage: ''
         },
         {
@@ -328,7 +300,7 @@ export default {
           lessonType: 'pdf',
           lessonTitle: 'Lesson #8 Title',
           lessonDescription: 'A short paragraph on what the person is going to learn in this lesson.',
-          contentURL: './static/demo.pdf',
+          contentURL: './static/demo6.pdf',
           posterImage: ''
         },
         {
@@ -367,10 +339,6 @@ export default {
     },
 
     loadContent: function (lessonID) {
-      // Let's reset the pdf page props
-      this.currentPage = 1
-      this.pageCount = 0
-
       // Let's set the currentLesson to load the right content
       this.currentLesson = lessonID
 
@@ -491,26 +459,6 @@ export default {
       let seconds = Math.floor(timeToFormat % 60)
       seconds = (seconds >= 10) ? seconds : '0' + seconds
       return minutes + ':' + seconds
-    },
-
-    goToPreviousPage: function () {
-      if (this.currentPage > 1) {
-        this.currentPage = this.currentPage - 1
-      }
-    },
-
-    goToNextPage: function () {
-      if (this.currentPage < this.pageCount) {
-        this.currentPage = this.currentPage + 1
-      }
-    },
-
-    goToFirstPage: function () {
-      this.currentPage = 1
-    },
-
-    goToLastPage: function (lastPage) {
-      this.currentPage = lastPage
     }
 
   }
