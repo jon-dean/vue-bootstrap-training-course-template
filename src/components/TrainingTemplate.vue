@@ -106,12 +106,12 @@
             <div class="cardMediaFormatting">
 
               <!-- Small screen PDF page controls -->
-              <b-row class="d-block d-lg-none mb-4">
+              <b-row class="d-block d-lg-none mb-4 text-center">
                 <vue-pdf-viewer height="500px" :url="activeLesson.contentURL"></vue-pdf-viewer>
               </b-row>
 
               <!-- Tablet / desktop screen PDF page controls -->
-              <b-row class="d-none d-lg-block mb-4">
+              <b-row class="d-none d-lg-block mb-4 text-center">
                 <vue-pdf-viewer height="950px" :url="activeLesson.contentURL"></vue-pdf-viewer>
               </b-row>
 
